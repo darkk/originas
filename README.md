@@ -73,3 +73,50 @@ ASN в имя AS
 Дамп asn.txt содержит информацию о 87637, включая AS геокодированые США, странами Африки и т.п., т.е. он включает в себя не только европейские сети региона RIPE NCC.
 
 На первый взгляд, полнота этих данных достаточна для практического применения "примерно узнать, в какой сети очередной забаненный РКН IP адрес".
+
+Но я кэширую whois!
+===================
+
+> There are only two hard things in Computer Science: cache invalidation and naming things.
+
+Кэширование whois вместо использования данных маршрутизации может привести к забавным багам.
+
+Представим, что адрес `8.8.254.254` был забанен РКН. `whois` припишет ему префикс `8.0.0.0/9` и имя asn `Level 3 Parent, LLC`. В кэш эта информация будет сохранена и последующий поиск адреса `8.8.8.8` припишет его также `Level 3`, что неверно.
+
+При поиске по данным маршрутизации, ответ будет более точный:
+
+```
+$ docker exec --user postgres -it pg-originas psql -c "select * from originas join asn using(asn) where '8.8.254.254'::inet <<= origin"
+ asn  |   origin   |              asname
+------+------------+----------------------------------
+ 3356 | 8.0.0.0/12 | LEVEL3 - Level 3 Parent, LLC, US
+(1 row)
+
+$ docker exec --user postgres -it pg-originas psql -c "select * from originas join asn using(asn) where '8.8.8.8'::inet <<= origin"
+  asn  |   origin   |              asname
+-------+------------+----------------------------------
+ 15169 | 8.8.8.0/24 | GOOGLE - Google LLC, US
+  3356 | 8.0.0.0/12 | LEVEL3 - Level 3 Parent, LLC, US
+(2 rows)
+```
+
+Не всё так однозначно...
+========================
+
+К сожалению, использование AS-SET (группы автономных систем, объединенных для
+маршрутизации) может порождать неоднозначности, когда один и тот же минимальный
+покрывающий IP-адрес префикс может быть приписан разным AS. Например `20.134.1.42`:
+
+```
+$ docker exec --user postgres -it pg-originas psql -c "select * from originas join asn using(asn) where '20.134.1.42'::inet <<= origin"
+  asn  |    origin     |                      asname
+-------+---------------+---------------------------------------------------
+ 17916 | 20.134.0.0/20 | CSC-IGN-AUNZ-AP Computer Sciences Corporation, AU
+  7474 | 20.134.0.0/20 | OPTUSCOM-AS01-AU SingTel Optus Pty Ltd, AU
+(2 rows)
+
+```
+
+Хорошего рецепта для разрешения подобных неоднозначностей у меня нет.
+
+Такой адрес смущает и [RIPE Stat](https://stat.ripe.net/20.134.1.42#tabId=routing): какие-то из полей утверждают, что _168 peers announcing 20.134.0.0/20 originated by AS0_, а виджет _Prefix Routing Consistency_ показывает уровень бардака.
