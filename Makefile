@@ -1,13 +1,13 @@
 .PHONY: run-psql fill-psql lookup-psql clean
 
 run-psql :
-	docker run -v `pwd`:/mnt --rm -ti --name pg-originas -e POSTGRES_PASSWORD=`dd if=/dev/urandom bs=1 count=24 | base64` postgres:10
+	docker run -v `pwd`:/mnt:ro --rm -ti --name pg-originas -e POSTGRES_PASSWORD=`dd if=/dev/urandom bs=1 count=24 | base64` postgres:10
 
 fill-psql : originas.tsv.psql asn.tsv
-	docker exec  --user postgres -ti pg-originas psql -f /mnt/fill_psql.sql
+	docker exec --user postgres -ti pg-originas psql -f /mnt/fill_psql.sql
 
 lookup-psql : query-ips
-	docker exec  --user postgres -i pg-originas psql --no-align --field-separator='	' --set="qfile='/mnt/$^'" -f /mnt/lookup_psql.sql
+	docker exec --user postgres -i pg-originas psql --no-align --field-separator='	' --set="qfile='/mnt/$^'" -f /mnt/lookup_psql.sql
 
 clean :
 	rm -f originas.sqlite originas.tsv.psql originas.tsv.sqlite
