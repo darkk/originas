@@ -114,7 +114,6 @@ $ docker exec --user postgres -it pg-originas psql -c "select * from originas jo
  17916 | 20.134.0.0/20 | CSC-IGN-AUNZ-AP Computer Sciences Corporation, AU
   7474 | 20.134.0.0/20 | OPTUSCOM-AS01-AU SingTel Optus Pty Ltd, AU
 (2 rows)
-
 ```
 
 Хорошего рецепта для разрешения подобных неоднозначностей у меня нет.
