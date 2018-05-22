@@ -63,4 +63,13 @@ ASN в имя AS
 
 Можно использовать [JSON API от stat.ripe.net](https://stat.ripe.net/docs/data_api#AsOverview), например, для [AS8997](https://stat.ripe.net/data/as-overview/data.json?resource=AS8997).
 
-Или взять файл asn.txt с https://ftp.ripe.net/ripe/asnames/asn.txt
+Или взять файл [asn.txt с ftp.ripe.net](https://ftp.ripe.net/ripe/asnames/asn.txt) и импортировать его в БД.
+
+Полнота данных
+==============
+
+Дамп с routeviews включает в себя 60674 AS и 712961 префикс.
+
+Дамп asn.txt содержит информацию о 87637, включая AS геокодированые США, странами Африки и т.п., т.е. он включает в себя не только европейские сети региона RIPE NCC.
+
+На первый взгляд, полнота этих данных достаточна для практического применения "примерно узнать, в какой сети очередной забаненный РКН IP адрес".
