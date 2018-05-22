@@ -5,6 +5,9 @@
 
 NB: для одного адреса теоретически может быть несколько разных AS, если они указаны указаны как AS-SET для наименьшего покрывающего данный IP адрес префикса.
 
+IP в ASN
+========
+
 Подготовка БД:
 
 ```
@@ -54,3 +57,10 @@ real	0m0.312s
 user	0m0.020s
 sys	0m0.012s
 ```
+
+ASN в имя AS
+============
+
+Можно использовать [JSON API от stat.ripe.net](https://stat.ripe.net/docs/data_api#AsOverview), например, для [AS8997](https://stat.ripe.net/data/as-overview/data.json?resource=AS8997).
+
+Или взять файл asn.txt с https://ftp.ripe.net/ripe/asnames/asn.txt
