@@ -21,7 +21,7 @@ $ make originas.bz2 && make fill-psql
 Поиск адресов:
 
 ```
-$ time ./lookup.py $(shuf -n 100 sample | sort -V) 
+$ time ./lookup_sqlite.py $(shuf -n 100 sample | sort -V) 
 23.253.109.158	23.253.64.0/18	AS33070
 47.74.14.56	47.74.0.0/18	AS45102
 47.74.21.219	47.74.0.0/18	AS45102
